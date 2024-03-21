@@ -1,0 +1,1309 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.FExport..Create(DashForm)
+Gui.FExport..Caption("7481 Time and Attendance Export Gridview UKG")
+Gui.FExport..Size(1251,739)
+Gui.FExport..MinX(0)
+Gui.FExport..MinY(0)
+Gui.FExport..Position(0,0)
+Gui.FExport..AlwaysOnTop(False)
+Gui.FExport..FontName("Tahoma")
+Gui.FExport..FontSize(8.25)
+Gui.FExport..ControlBox(True)
+Gui.FExport..MaxButton(True)
+Gui.FExport..MinButton(True)
+Gui.FExport..MousePointer(0)
+Gui.FExport..Moveable(True)
+Gui.FExport..Sizeable(True)
+Gui.FExport..ShowInTaskBar(True)
+Gui.FExport..TitleBar(True)
+Gui.FExport..Event(UnLoad,FExport_UnLoad)
+Gui.FExport..Event(ExportClick,cmdXP_Click)
+Gui.FExport..Event(RefreshClick,FExport_RefreshClick)
+Gui.FExport..BarRefreshButton(True)
+Gui.FExport.GsGCTA.Create(GsGridControl)
+Gui.FExport.GsGCTA.Enabled(True)
+Gui.FExport.GsGCTA.Visible(True)
+Gui.FExport.GsGCTA.Zorder(0)
+Gui.FExport.GsGCTA.Size(1240,570)
+Gui.FExport.GsGCTA.Position(4,56)
+Gui.FExport.GsGCTA.Event(ColumnFilterChanged,GsGCTA_ColumnFilterChanged)
+Gui.FExport.GsGCTA.Anchor(15)
+Gui.FExport.GsGCTA.Event(RowCellClick,GsGCTA_RowCellClick)
+Gui.FExport.dtpFromDate.Create(DatePicker)
+Gui.FExport.dtpFromDate.Enabled(True)
+Gui.FExport.dtpFromDate.Visible(True)
+Gui.FExport.dtpFromDate.Zorder(0)
+Gui.FExport.dtpFromDate.Size(100,20)
+Gui.FExport.dtpFromDate.Position(12,26)
+Gui.FExport.dtpFromDate.CheckBox(False)
+Gui.FExport.dtpFromDate.FontName("Tahoma")
+Gui.FExport.dtpFromDate.FontSize(8.25)
+Gui.FExport.dtpToDate.Create(DatePicker)
+Gui.FExport.dtpToDate.Enabled(True)
+Gui.FExport.dtpToDate.Visible(True)
+Gui.FExport.dtpToDate.Zorder(0)
+Gui.FExport.dtpToDate.Size(100,20)
+Gui.FExport.dtpToDate.Position(126,26)
+Gui.FExport.dtpToDate.CheckBox(False)
+Gui.FExport.dtpToDate.FontName("Tahoma")
+Gui.FExport.dtpToDate.FontSize(8.25)
+Gui.FExport.cmdXP.Create(Button)
+Gui.FExport.cmdXP.Enabled(True)
+Gui.FExport.cmdXP.Visible(True)
+Gui.FExport.cmdXP.Zorder(0)
+Gui.FExport.cmdXP.Size(114,28)
+Gui.FExport.cmdXP.Position(1129,633)
+Gui.FExport.cmdXP.Caption("EXPORT")
+Gui.FExport.cmdXP.FontName("Tahoma")
+Gui.FExport.cmdXP.FontSize(11)
+Gui.FExport.cmdXP.Anchor(10)
+Gui.FExport.cmdXP.Event(Click,cmdXP_Click)
+Gui.FExport.cmdPopGrid.Create(Button)
+Gui.FExport.cmdPopGrid.Enabled(True)
+Gui.FExport.cmdPopGrid.Visible(False)
+Gui.FExport.cmdPopGrid.Zorder(0)
+Gui.FExport.cmdPopGrid.Size(41,23)
+Gui.FExport.cmdPopGrid.Position(1198,16)
+Gui.FExport.cmdPopGrid.Caption("")
+Gui.FExport.cmdPopGrid.FontName("Tahoma")
+Gui.FExport.cmdPopGrid.FontSize(8.25)
+Gui.FExport.cmdPopGrid.SvgPicture("icon_refresh_color")
+Gui.FExport.cmdPopGrid.Anchor(9)
+Gui.FExport.txtSelected.Create(TextBox,"",True,43,20,0,15,645,False,0,"Tahoma",8.25,,1)
+Gui.FExport.txtSelected.Anchor(6)
+Gui.FExport.txtFiltered.Create(TextBox,"",True,44,20,0,68,645,False,0,"Tahoma",8.25,,1)
+Gui.FExport.txtFiltered.Anchor(6)
+Gui.FExport.txtTotal.Create(TextBox,"",True,49,20,0,122,645,False,0,"Tahoma",8.25,,1)
+Gui.FExport.txtTotal.Anchor(6)
+Gui.FExport.lbl1.Create(Label,"Selected:",True,45,13,0,15,629,True,0,"Tahoma",8.25,,0,0)
+Gui.FExport.lbl1.BorderStyle(0)
+Gui.FExport.lbl1.Anchor(6)
+Gui.FExport.lbl2.Create(Label,"Filtered:",True,40,13,0,68,629,True,0,"Tahoma",8.25,,0,0)
+Gui.FExport.lbl2.BorderStyle(0)
+Gui.FExport.lbl2.Anchor(6)
+Gui.FExport.lbl3.Create(Label,"Total:",True,28,13,0,122,629,True,0,"Tahoma",8.25,,0,0)
+Gui.FExport.lbl3.BorderStyle(0)
+Gui.FExport.lbl3.Anchor(6)
+Gui.FExport.lbl4.Create(Label,"Start Date:",True,54,13,0,12,10,True,0,"Tahoma",8.25,,0,0)
+Gui.FExport.lbl4.BorderStyle(0)
+Gui.FExport.lbl4.Anchor(6)
+Gui.FExport.lbl5.Create(Label,"End Date:",True,48,13,0,126,10,True,0,"Tahoma",8.25,,0,0)
+Gui.FExport.lbl5.BorderStyle(0)
+Gui.FExport.lbl5.Anchor(6)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+v.Global.sDir.Declare
+V.Global.bUnattended.Declare(Boolean, False)
+V.Global.bLoadData.Declare
+V.Global.sFilter.Declare
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+Function.Intrinsic.UI.UsePixels ' Allows you to use Pixels instead of Twips throughout
+F.Intrinsic.Control.Try
+
+
+F.Intrinsic.Control.If(V.Ambient.IsInTaskScheduler)
+	'This is where we will start the unattended gathering of data and export to CSV then calling of the BAT file for the encryption and upload to UKG
+	V.Global.bUnattended.Set(True)
+	
+F.Intrinsic.Control.Else
+	'User is calling the program from a menu item and we will show them all the data before they export it.
+	V.Global.bUnattended.Set(False)
+	F.Intrinsic.Control.CallSub(PreFolderCheck)
+	F.Intrinsic.Control.CallSub(LoadContextMenu)
+	
+	F.Intrinsic.Control.CallSub(FExport_RefreshClick)
+	F.Intrinsic.Control.CallSub(SetFromDate)
+	GUI.FExport..Show
+F.Intrinsic.Control.EndIf
+
+
+
+F.Intrinsic.Control.If(V.Ambient.IsInIDE)
+	GUI.FExport.dtpFromDate.Value(V.Ambient.MinDate)
+	GUI.FExport.dtpToDate.Value("2400-01-01")
+	F.Intrinsic.Control.CallSub(FExport_RefreshClick)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.Main.End
+
+
+#Region "Initial setup"
+
+Program.Sub.SetFromDate.Start
+F.Intrinsic.Control.Try
+
+V.Local.dDate.Declare(Date)
+
+F.Intrinsic.Date.DateAdd("d", -7, V.Ambient.Date, V.Local.dDate)
+GUI.FExport.dtpFromDate.Value(V.Local.dDate)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.SetFromDate.End
+
+Program.Sub.PreFolderCheck.Start
+F.Intrinsic.Control.Try
+
+V.Local.sFilePath.Declare
+V.Local.sCustom.Declare
+V.Local.bExists.Declare
+V.Local.sXPPath.Declare
+V.Local.sBCFile.Declare
+
+F.Intrinsic.string.Build("{0}\CUSTOM\7481\{1}\EXPORT",V.Caller.GlobalDir, V.Caller.CompanyCode, V.Local.sFilePath)
+F.Intrinsic.File.DirExists(V.Local.sFilePath,V.Local.bExists)
+F.Intrinsic.Control.If(V.local.bExists,=,false)
+	F.Intrinsic.File.CreateDir(V.Local.sFilePath)
+F.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.PreFolderCheck.End
+
+Program.Sub.LoadContextMenu.Start
+F.Intrinsic.Control.Try
+
+GUI.FExport..ContextMenuCreate("gvTA")
+
+GUI.FExport..ContextMenuAddItem("gvTA","SELECTF",0,"Select Filtered Rows")
+GUI.FExport..ContextMenuSetItemEventHandler("gvTA","SelectF","ContextMenuItemSelection")
+
+GUI.FExport..ContextMenuAddItem("gvTA","USELECTF",0,"Deselect Filtered Rows")
+GUI.FExport..ContextMenuSetItemEventHandler("gvTA","USelectF","ContextMenuItemSelection")
+
+GUI.FExport..ContextMenuAddItem("gvTA","SELECT",0,"Select All Rows")
+GUI.FExport..ContextMenuSetItemEventHandler("gvTA","Select","ContextMenuItemSelection")
+
+GUI.FExport..ContextMenuAddItem("gvTA","USELECT",0,"Deselect All Rows")
+GUI.FExport..ContextMenuSetItemEventHandler("gvTA","USelect","ContextMenuItemSelection")
+
+GUI.FExport..ContextMenuAddItem("gvTA","RESET",0,"Reset Formatting")
+GUI.FExport..ContextMenuSetItemEventHandler("gvTA","RESET","ContextMenuItemSelection")
+
+
+F.Intrinsic.Control.If(V.Caller.GSSVersion, >=, "2019.1")
+	GUI.FExport..ContextMenuAddItem("gvTA","CopyFilter",0,"Copy Grid Filter to Clipboard")
+	GUI.FExport..ContextMenuSetItemEventHandler("gvTA","CopyFilter","ContextMenuItemSelection")
+F.Intrinsic.Control.EndIf
+
+GUI.FExport..ContextMenuAddItem("gvTA","EXPORT",0,"Export Grid to Excel")
+GUI.FExport..ContextMenuSetItemEventHandler("gvTA","EXPORT","ContextMenuItemSelection")
+
+GUI.FExport.GsGCTA.ContextMenuAttach("gvTA")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.LoadContextMenu.End
+
+Program.Sub.ContextMenuItemSelection.Start
+F.Intrinsic.Control.Try
+
+V.Local.sJobs.Declare(String)
+V.Local.sMessage.Declare(String)
+V.Local.iRet.Declare(Long)
+V.Local.sFilter.Declare(String)
+V.Local.sSQL.Declare(String)
+ 
+F.Intrinsic.Control.If(V.Args.ItemName,=,"SELECTF")
+	F.Intrinsic.Control.CallSub(GridViewFilterToDataViewFilter, "FILTER", V.Global.sFilter)
+	F.Data.DataView.Create("dtTAData","SetVw",22,V.Args.Filter,"")
+	F.Data.DataView.SetValue("dtTAData","SetVw",-1,"Selected",True)
+	F.Data.DataView.Close("dtTAData","SetVw")
+	F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", -1)
+	
+F.Intrinsic.Control.ElseIf(V.Args.ItemName,=,"USELECTF")
+	F.Intrinsic.Control.CallSub(GridViewFilterToDataViewFilter, "FILTER", V.Global.sFilter)
+	F.Data.DataView.Create("dtTAData","SetVw",22,V.Args.Filter,"")
+	F.Data.DataView.SetValue("dtTAData","SetVw",-1,"Selected",False)
+	F.Data.DataView.Close("dtTAData","SetVw")
+	F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", -1)
+	
+F.Intrinsic.Control.ElseIf(V.Args.ItemName,=,"SELECT")
+	F.Data.DataView.SetValue("dtTAData","dvTAData",-1,"Selected",True)
+	F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", V.DataTable.dtTAData.RowCount)
+
+F.Intrinsic.Control.ElseIf(V.Args.ItemName,=,"USELECT")
+	F.Data.DataView.SetValue("dtTAData","dvTAData",-1,"Selected",False)
+	F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", 0)
+
+
+F.Intrinsic.Control.ElseIf(V.Args.ItemName, =, "COPYFILTER")
+	GUI.FExport.GsGCTA.FilterToWhereClause("gvTA", V.Local.sFilter)
+	
+	F.Intrinsic.Control.If(V.Local.sFilter.Trim, !=, "")
+		F.Intrinsic.UI.SetClipboardText(V.Local.sFilter)
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ElseIf(V.Args.ItemName, =, "RESET")
+	F.Intrinsic.Control.CallSub(ResetSerialization, "GridView", "gvTA", "RegID", "7481")
+	F.Intrinsic.Control.CallSub(FormatGrid)
+	
+F.Intrinsic.Control.ElseIf(V.Args.ItemName, =, "EXPORT")
+	F.Intrinsic.Control.CallSub(Export, "Form", "FExport", "GRIDCONTROL", "GsGCTA", "FileName", "ExportMenuTAGrid")
+	
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.If(V.Ambient.ErrorNumber, =, 21058)
+		F.Intrinsic.UI.Msgbox("This type of filter cannot be used for select filtered rows. Please use a different filter or select the rows manually.")
+	F.Intrinsic.Control.Else
+		F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndTry
+Program.Sub.ContextMenuItemSelection.End
+
+Program.Sub.Serialize.Start
+'pass FORM, GRIDCONTROL, GRIDVIEW, REGID
+
+F.Intrinsic.Control.Try
+
+V.Local.sSerialize.Declare(String)
+V.Local.sForm.Declare(String)
+V.Local.sGridControl.Declare(String)
+V.Local.sGridView.Declare(String)
+V.Local.sREGID.Declare(String)
+
+V.Local.sForm.Set(V.Args.Form.Trim)
+V.Local.sGridControl.Set(V.Args.GridControl.Trim)
+V.Local.sGridView.Set(V.Args.GridView.Trim)
+V.Local.sREGID.Set(V.Args.REGID.Trim)
+
+GUI.[V.Local.sForm].[V.Local.sGridControl].Serialize(V.Local.sGridView, V.Local.sSerialize)
+F.Global.Registry.AddValue(V.Caller.User, V.Caller.CompanyCode, V.Local.sGridView, V.Local.sREGID, 1000, False, "Serialize", False, 0, -999.0 , 1/1/1980, 12:00:00 AM, V.Local.sSerialize)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.Serialize.End
+
+Program.Sub.Deserialize.Start
+'pass FORM, GRIDCONTROL, GRIDVIEW, REGID
+
+F.Intrinsic.Control.Try
+
+V.Local.sSerialize.Declare(String)
+V.Local.sForm.Declare(String)
+V.Local.sGridControl.Declare(String)
+V.Local.sGridView.Declare(String)
+V.Local.sREGID.Declare(String)
+
+V.Local.sForm.Set(V.Args.Form.Trim)
+V.Local.sGridControl.Set(V.Args.GridControl.Trim)
+V.Local.sGridView.Set(V.Args.GridView.Trim)
+V.Local.sREGID.Set(V.Args.REGID.Trim)
+
+F.Global.Registry.ReadValue(V.Caller.User, V.Caller.CompanyCode, V.Local.sGridView, V.Local.sREGID, 1000, 6, "", V.Local.sSerialize)
+F.Intrinsic.Control.If(V.Local.sSerialize.Trim,<>,"")
+	Gui.[V.Local.sForm].[V.Local.sGridControl].Deserialize(V.Local.sSerialize)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.If(V.Ambient.ErrorNumber, =, 121000)
+		F.Intrinsic.Control.ClearErrors
+		F.Intrinsic.Control.CallSub(ResetSerialization, "RegId", V.Args.REGID, "GridView", V.Args.GridView)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndTry
+Program.Sub.Deserialize.End
+
+Program.Sub.ResetSerialization.Start
+'pass REGID, GRIDVIEW
+
+F.Intrinsic.Control.Try
+
+F.Global.Registry.AddValue(V.Caller.User, V.Caller.CompanyCode, V.Args.GridView, V.Args.REGID, 1000, False, "Serialize", False, 0, -999.0 , 1/1/1980, 12:00:00 AM, "")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.ResetSerialization.End
+
+#End Region ' Initial setup
+
+
+#Region "Time and Attendence Tab"
+
+Program.Sub.FExport_RefreshClick.Start
+F.Intrinsic.Control.Try
+
+V.Local.sSql.Declare
+V.Local.sFilter.Declare
+V.Local.dFromDt.Declare
+V.Local.dToDt.Declare
+V.Local.bExists.Declare
+V.Local.sListVw.Declare
+V.Local.icount.Declare
+
+V.Local.dFromDt.Set(V.Screen.FExport!dtpFromDate.value)
+V.Local.dToDt.Set(V.Screen.FExport!dtpToDate.value)
+
+F.Intrinsic.Control.If(V.Local.dFromDt,>,V.Local.dToDt)
+	F.Intrinsic.UI.Msgbox("The from date cannot be greater than the to date")
+	GUI.FExport..SetFocus
+F.Intrinsic.Control.EndIf
+
+GUI.FExport..Enabled(false)
+
+F.Intrinsic.UI.InvokeWaitDialog("Loading Grid")
+
+F.Intrinsic.Control.If(V.DataTable.dtTAData.Exists)
+	F.Intrinsic.Control.If(V.Global.bLoadData.Not)
+		F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+			F.Intrinsic.Control.CallSub(Serialize, "FORM", "FExport", "GRIDCONTROL", "GsGCTA", "GRIDVIEW", "gvTA", "REGID", 7481)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+GUI.FExport.GsGCTA.Visible(False)
+F.Intrinsic.Control.If(V.Global.bLoadData)
+	F.Intrinsic.Control.CallSub(EmptyJobData)
+F.Intrinsic.Control.Else
+	V.Global.bLoadData.Set(True)
+	F.Intrinsic.Control.CallSub(LoadData)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.CallSub(FormatGrid)
+V.Global.bLoadData.Set(False)
+
+F.Intrinsic.Control.CallSub(Deserialize, "FORM", "FExport", "GRIDCONTROL", "GsGCTA", "GRIDVIEW", "gvTA", "REGID", 7481)
+
+F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", -1)
+
+F.Intrinsic.UI.CloseWaitDialog
+GUI.FExport.GsGCTA.Visible(True)
+
+GUI.FExport..Enabled(true)
+GUI.FExport..SetFocus
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.FExport_RefreshClick.End
+
+Program.Sub.cmdXP_Click.Start
+F.Intrinsic.Control.Try
+V.Local.sDateIN.Declare
+V.Local.sDateOut.Declare
+V.Local.sTimeIN.Declare
+V.Local.sTimeOut.Declare
+V.Local.iCnt.Declare
+v.local.sFullFilePath.Declare
+v.Local.sProgExec.Declare
+V.Local.sFilePath.Declare
+V.Local.bExists.Declare
+V.Local.bFileLocked.Declare
+V.Local.sMsg.Declare
+
+F.Intrinsic.Control.If(V.Screen.FExport!txtSelected.Text,=,0)
+	F.Intrinsic.UI.Msgbox("No rows have been selected for export, please select rows and try again.")
+	GUI.FExport..SetFocus
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+GUI.FExport..Enabled(false)
+
+F.Data.DataView.Create("dtTAData","dvSelected","22","Selected = True","")
+F.Data.DataView.ToDataTable("dtTAData","dvSelected","dtSelected",True)
+F.Data.DataView.Close("dtTAData","dvSelected")
+
+
+f.Data.Datatable.Create("dt")
+f.Data.Datatable.AddColumn("dt","PersonNumber","string")
+f.Data.Datatable.AddColumn("dt","Date","string")
+f.Data.Datatable.AddColumn("dt","Time","string")
+f.Data.Datatable.AddColumn("dt","OverrideType","string")
+f.Data.Datatable.AddColumn("dt","BusinessStructure","string")
+f.Data.Datatable.AddColumn("dt","LaborCategoryLevel1","string")
+f.Data.Datatable.AddColumn("dt","LaborCategoryLevel2","string")
+f.Data.Datatable.AddColumn("dt","LaborCategoryLevel3","string")
+f.Data.Datatable.AddColumn("dt","LaborCategoryLevel4","string")
+f.Data.Datatable.AddColumn("dt","LaborCategoryLevel5","string")
+f.Data.Datatable.AddColumn("dt","LaborCategoryLevel6","string")
+f.Data.Datatable.AddColumn("dt","WorkRule","string")
+f.Data.Datatable.AddColumn("dt","TimeZone","string")
+f.Data.Datatable.AddColumn("dt","Comment","string")
+f.Data.Datatable.AddColumn("dt","CommentNote","string")
+f.Data.Datatable.AddColumn("dt","DeductionRuleToCancel","string")
+f.Data.Datatable.AddColumn("dt","Position","string")
+f.Data.Datatable.AddColumn("dt","UserEnteredPosition","Boolean")
+
+f.Intrinsic.Control.For(V.Local.iCnt,0,v.DataTable.dtSelected.RowCount--,1)
+	
+	F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).Date_in!Fieldval,"YYYY/MM/DD",V.Local.sDateIN)
+	F.Intrinsic.String.Replace(V.Local.sDateIN,"/","-",V.Local.sDateIN)
+	f.Intrinsic.String.Left(v.DataTable.dtTAData(v.Local.iCnt).Time_in!fieldval,5,v.Local.sTimeIN)
+	F.Intrinsic.String.Replace(V.Local.sTimeIN,":","",V.Local.sTimeIN)
+	'F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).Time_in!Fieldval,"HHMM",V.Local.sTimeIN)
+	f.Data.Datatable.AddRow("dt","PersonNumber",v.DataTable.dtTAData(v.Local.iCnt).Employee!fieldvaltrim,"Date",v.Local.sDateIN,"Time",v.Local.sTimeIN)
+	
+	F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).date_out!Fieldval,"YYYY/MM/DD",V.Local.sDateOut)
+	F.Intrinsic.String.Replace(V.Local.sDateOut,"/","-",V.Local.sDateOut)
+	f.Intrinsic.String.Left(v.DataTable.dtTAData(v.Local.iCnt).Time_out!fieldval,5,v.Local.sTimeOut)
+	F.Intrinsic.String.Replace(V.Local.sTimeOut,":","",V.Local.sTimeOut)
+	'F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).Time_out!Fieldval,"HHMM",V.Local.sTimeOut)
+	f.Data.Datatable.AddRow("dt","PersonNumber",v.DataTable.dtTAData(v.Local.iCnt).Employee!fieldvaltrim,"Date",v.Local.sDateOut,"Time",v.Local.sTimeOut)
+	
+f.Intrinsic.Control.Next(V.Local.iCnt)
+F.Data.DataTable.Close("dtSelected")
+
+
+
+F.Intrinsic.string.Build("{0}\CUSTOM\7481\{1}\EXPORT",V.Caller.GlobalDir, V.Caller.CompanyCode, V.Local.sFilePath)
+F.Intrinsic.File.DirExists(V.Local.sFilePath,V.Local.bExists)
+F.Intrinsic.Control.If(V.local.bExists,=,false)
+	F.Intrinsic.File.CreateDir(V.Local.sFilePath)
+F.Intrinsic.Control.EndIf
+
+
+f.Intrinsic.String.Concat(V.Local.sFilePath,"\TimeAttendanceUpload.csv",v.Local.sFullFilePath)
+F.Intrinsic.File.Exists(V.Local.sFullFilePath,V.Local.bExists)
+F.Intrinsic.Control.If(V.local.bExists,=,True)
+	F.Intrinsic.File.IsFileLocked(V.Local.sFullFilePath,V.Local.bFileLocked)
+	F.Intrinsic.Control.If(V.Local.bFileLocked)
+		F.Intrinsic.String.Build("File already exists and is locked. Please try again.{0}{1}",V.Ambient.NewLine,v.Local.sFullFilePath,V.Local.sMsg)
+		F.Intrinsic.UI.Msgbox(V.Local.sMsg)
+		F.Data.DataTable.Close("dt")
+		GUI.FExport..Enabled(true)
+		F.Intrinsic.Control.ExitSub
+	F.Intrinsic.Control.Else
+		F.Intrinsic.File.DeleteFile(V.Local.sFullFilePath)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+f.Data.Datatable.SaveToCSV("dt",v.Local.sFullFilePath,true)
+F.Data.DataTable.Close("dt")
+
+f.Intrinsic.String.Concat(v.Caller.GlobalDir,"\pgp\encrypt_upload.bat ",v.Local.sProgExec)
+F.Intrinsic.File.Exists(V.Local.sProgExec,V.Local.bExists)
+F.Intrinsic.Control.If(V.local.bExists,=,false)
+	F.Intrinsic.UI.Msgbox("encrypt_upload.bat not found!")
+	GUI.FExport..Enabled(true)
+	F.Intrinsic.Control.ExitSub	
+F.Intrinsic.Control.EndIf
+
+f.Intrinsic.Task.ShellExec(1,"", v.Local.sProgExec,v.local.sFullFilePath,"", 1)
+
+F.Intrinsic.UI.Msgbox("Export to UKG Complete")
+GUI.FExport..Enabled(true)
+GUI.FExport..SetFocus
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GCG_7481_NEST_XP", "TASK", "GCG_7481_NEST_XP")
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdXP_Click.End
+
+Program.Sub.LoadData.Start
+F.Intrinsic.Control.Try
+
+V.Local.sSql.Declare
+V.Local.sFilter.Declare
+V.Local.dFromDt.Declare
+V.Local.dToDt.Declare
+V.Local.bExists.Declare
+V.Local.sListVw.Declare
+V.Local.icount.Declare
+V.Local.sRet.Declare(String)
+V.Local.sWorkcenters.Declare(String)
+V.Local.sJSS.Declare(String)
+V.Local.sJS.Declare(String)
+
+V.Local.dFromDt.Set(V.Screen.FExport!dtpFromDate.value)
+V.Local.dToDt.Set(V.Screen.FExport!dtpToDate.value)
+
+F.Intrinsic.Control.If(V.DataTable.dtTAData.Exists)
+	F.Data.DataTable.Close("dtTAData")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("Select CAST(0 as bit) as SELECTED, RTRIM(Employee) as EMPLOYEE, CHARGE_DATE, DATE_IN, TIME_IN, DATE_OUT, TIME_OUT, RTRIM(NAME) as NAME,  HOURS_HH, HOURS_MM, RTRIM(DEPT) as DEPT, SHIFT, BAL_AS_DATE,  DATE_LAST_CHG, TIME_LAST_CHG, RTRIM(LAST_CHG_BY) as LAST_CHG_BY, RTRIM(LAST_CHG_PROG) as LAST_CHG_PROG, RTRIM(REC_GROUP) as REC_GROUP, Cast(IF(PAID = 'Y', '1', '0') as bit) as PAID, Cast(IF(EXCUSED = 'Y', '1', '0') as bit) as EXCUSED, year(BAL_AS_DATE) as Bal_Year  from V_TIME_ATTENDANCE where CHARGE_DATE >= '{0}' and CHARGE_DATE <= '{1}' ", V.Local.dFromDt.PervasiveDate, V.Local.dToDt.PervasiveDate,V.Local.sSQL)
+
+F.ODBC.Connection!Con.OpenCompanyConnection()
+F.Data.DataTable.CreateFromSQL("dtTAData","con",V.Local.sSQL,True)
+F.ODBC.Connection!con.Close
+
+F.Data.DataTable.AddExpressionColumn("dtTAData", "BALANCED", "Boolean", "IIF([Bal_Year] > '1900', True, False)")
+
+F.Data.Dataview.Create("dtTAData","dvTAData",22)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.LoadData.End
+
+Program.Sub.FormatGrid.Start
+F.Intrinsic.Control.Try
+
+'load gridview
+GUI.FExport.GsGCTA.AddGridviewFromDataview("gvTA","dtTAData","dvTAData")
+
+'gridview properties
+GUI.FExport.GsGCTA.SetGridviewProperty("gvTA","Enableappearanceoddrow",True)
+GUI.FExport.GsGCTA.SetGridviewProperty("gvTA","OptionsFindAlwaysVisible",False)
+GUI.FExport.GsGCTA.SetGridviewProperty("gvTA","Showgrouppanel",False)
+GUI.FExport.GsGCTA.SetGridviewProperty("gvTA","OptionsViewShowAutoFilterRow",True)
+GUI.FExport.GsGCTA.SetGridviewProperty("gvTA", "OptionsViewColumnAutoWidth", False)
+
+F.Intrinsic.Control.If(V.Caller.GSSVersion, >=, "2019.1")
+	GUI.FExport.GsGCTA.SetGridviewProperty("gvTA", "SuppressNothingDates", True)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Caller.GSSVersion, >=, "2020.1")
+	GUI.FExport.GsGCTA.SetGridviewProperty("gvTA", "ShowConditionalFormattingItem", True)
+F.Intrinsic.Control.EndIf
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Bal_Year","Visible", False)
+
+'column properties
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","caption","Selected")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","readonly", True)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","allowedit", False)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","MinWidth", 45)
+Gui.FExport.GsGCTA.SetColumnProperty("gvTA","Selected","Fixed","left")
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EMPLOYEE","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EMPLOYEE","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EMPLOYEE","caption","Employee ID")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EMPLOYEE","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EMPLOYEE","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EMPLOYEE","MinWidth", 45)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","caption","Charge Date")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","DisplayCustomDatetime", "d")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","CHARGE_DATE","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","caption","Date In")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","DisplayCustomDatetime", "d")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","caption","Time In")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","DisplayCustomDatetime", "T")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_IN","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","caption","Date Out")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","DisplayCustomDatetime", "d")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","caption","Time Out")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","DisplayCustomDatetime", "T")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_OUT","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","NAME","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","NAME","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","NAME","caption","Employee Name")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","NAME","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","NAME","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","NAME","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DEPT","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DEPT","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DEPT","caption","Dept")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DEPT","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DEPT","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DEPT","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","SHIFT","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","SHIFT","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","SHIFT","caption","Shift")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","SHIFT","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","SHIFT","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","SHIFT","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","REC_GROUP","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","REC_GROUP","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","REC_GROUP","caption","Rec Group")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","REC_GROUP","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","REC_GROUP","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","REC_GROUP","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","PAID","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","PAID","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","PAID","caption","Paid")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","PAID","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","PAID","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","PAID","MinWidth", 30)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EXCUSED","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EXCUSED","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EXCUSED","caption","Excused")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EXCUSED","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EXCUSED","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","EXCUSED","MinWidth", 30)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","caption","Balance as Date")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","DisplayCustomDatetime", "d")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BAL_AS_DATE","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","caption","Balanced")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","MinWidth", 30)
+Gui.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","Fixed","left")
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","caption","Last Chg Date")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","DisplayCustomDatetime", "d")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","MinWidth", 80)
+
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","caption","Last Chg Time")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","DisplayCustomDatetime", "T")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","TIME_LAST_CHG","MinWidth", 80)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_BY","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_BY","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_BY","caption","Last Chg By")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_BY","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_BY","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_BY","MinWidth", 45)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_PROG","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_PROG","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_PROG","caption","Last Chg Prog")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_PROG","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_PROG","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","LAST_CHG_PROG","MinWidth", 45)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_HH","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_HH","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_HH","caption","HH")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_HH","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_HH","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_HH","MinWidth", 45)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_MM","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_MM","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_MM","caption","MM")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_MM","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_MM","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","HOURS_MM","MinWidth", 45)
+
+
+'conditional formatting
+GUI.FExport.GsGCTA.AddStyleFormatCondition("gvTA","Selected", "SelectTag", "equal", true)
+GUI.FExport.GsGCTA.setstyleFormatConditionproperty("gvTA","Selected", "SelectTag", "backcolor", "PaleGreen")
+GUI.FExport.GsGCTA.SetStyleFormatConditionProperty("gvTA", "Selected", "SelectTag", "ApplyToRow", True)
+
+
+'GUI.FExport.GsGCTA.AddStyleFormatCondition("gvTA", "BAL_AS_DATE", "BAL_AS_DATE", "Expression", "BAL_AS_DATE = '1900-01-01'")
+'GUI.FExport.GsGCTA.SetStyleFormatConditionproperty("gvTA", "BAL_AS_DATE", "BAL_AS_DATE", "ForeColor", "Red")
+
+GUI.FExport.GsGCTA.AddStyleFormatCondition("gvTA", "BALANCED", "BALANCED", "Equal", "False")
+GUI.FExport.GsGCTA.SetStyleFormatConditionproperty("gvTA", "BALANCED", "BALANCED", "backcolor", "LightCoral")
+
+'load main view
+GUI.FExport.GsGCTA.MainView("gvTA")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GCG_7481_NEST_XP", "TASK", "GCG_7481_NEST_XP")
+F.Intrinsic.Control.EndTry
+Program.Sub.FormatGrid.End
+
+Program.Sub.EmptyJobData.Start
+F.Intrinsic.Control.Try
+
+F.Data.DataTable.Create("dtTAData",true)
+F.Data.DataTable.AddColumn("dtTAData","SELECTED","Boolean")
+F.Data.DataTable.AddColumn("dtTAData","EMPLOYEE","String")
+F.Data.DataTable.AddColumn("dtTAData","CHARGE_DATE","Date")
+F.Data.DataTable.AddColumn("dtTAData","DATE_IN","Date")
+F.Data.DataTable.AddColumn("dtTAData","TIME_IN","Date")
+F.Data.DataTable.AddColumn("dtTAData","DATE_OUT","Date")
+F.Data.DataTable.AddColumn("dtTAData","TIME_OUT","Date")
+F.Data.DataTable.AddColumn("dtTAData","NAME","String")
+F.Data.DataTable.AddColumn("dtTAData","DEPT","String")
+F.Data.DataTable.AddColumn("dtTAData","SHIFT","String")
+F.Data.DataTable.AddColumn("dtTAData","REC_GROUP","String")
+F.Data.DataTable.AddColumn("dtTAData","PAID","Boolean")
+F.Data.DataTable.AddColumn("dtTAData","EXCUSED","Boolean")
+F.Data.DataTable.AddColumn("dtTAData","BAL_AS_DATE","Date")
+F.Data.DataTable.AddColumn("dtTAData","DATE_LAST_CHG","Date")
+F.Data.DataTable.AddColumn("dtTAData","TIME_LAST_CHG","Date")
+F.Data.DataTable.AddColumn("dtTAData","LAST_CHG_BY","String")
+F.Data.DataTable.AddColumn("dtTAData","LAST_CHG_PROG","String")
+F.Data.DataTable.AddColumn("dtTAData","HOURS_HH","Long")
+F.Data.DataTable.AddColumn("dtTAData","HOURS_MM","Long")
+F.Data.DataTable.AddColumn("dtTAData","Bal_Year","Long")
+
+F.Data.DataTable.AddExpressionColumn("dtTAData", "BALANCED", "Boolean", "IIF([Bal_Year] > '1900', True, False)")
+
+F.Data.Dataview.Create("dtTAData","dvTAData",22)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GCG_7481_NEST_XP", "TASK", "GCG_7481_NEST_XP")
+F.Intrinsic.Control.EndTry
+Program.Sub.EmptyJobData.End
+
+Program.Sub.LoadTotals.Start
+'pass SELECTED_OVERRIDE
+
+F.Intrinsic.Control.Try
+
+V.Local.sFilter.Declare(String, "")
+
+'set total records
+GUI.FExport.txtTotal.Text(V.DataTable.dtTAData.RowCount)
+
+'set filtered records
+F.Intrinsic.Control.If(V.Caller.GSSVersion, >, "2018.1")
+	GUI.FExport.GsGCTA.FilterToWhereClause("gvTA", V.Local.sFilter)
+F.Intrinsic.Control.Else
+	F.Intrinsic.Control.CallSub(GridViewFilterToDataViewFilter, "FILTER", V.Global.sFilter)
+	V.Local.sFilter.Set(V.Args.Filter)
+F.Intrinsic.Control.EndIf
+
+F.Data.DataView.Create("dtTAData", "dvCount", 22, V.Local.sFilter, "")
+GUI.FExport.txtFiltered.Text(V.DataView.dtTAData!dvCount.RowCount)
+
+'set selected records
+F.Intrinsic.Control.If(V.Args.SELECTED_OVERRIDE.Long, >, -1)
+	GUI.FExport.txtSelected.Text(V.Args.SELECTED_OVERRIDE.Long)
+F.Intrinsic.Control.Else
+	F.Data.DataView.SetFilter("dtTAData", "dvCount", "Selected = True")
+	GUI.FExport.txtSelected.Text(V.DataView.dtTAData!dvCount.RowCount)
+F.Intrinsic.Control.EndIf
+
+F.Data.DataView.Close("dtTAData", "dvCount")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GCG_7481_NEST_XP", "TASK", "GCG_7481_NEST_XP")
+F.Intrinsic.Control.EndTry
+Program.Sub.LoadTotals.End
+
+Program.Sub.GsGCTA_ColumnFilterChanged.Start
+F.Intrinsic.Control.Try
+
+V.Global.sFilter.Set(V.Args.ActiveFilterExpression)
+F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", -1)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GCG_7481_NEST_XP", "TASK", "GCG_7481_NEST_XP")
+F.Intrinsic.Control.EndTry
+Program.Sub.GsGCTA_ColumnFilterChanged.End
+
+Program.Sub.GsGCTA_RowCellClick.Start
+F.Intrinsic.Control.Try
+
+V.Local.sJob.Declare
+V.Local.sSuF.Declare
+V.Local.sPart.Declare
+V.Local.sLoc.Declare
+V.Local.sParams.Declare
+V.Local.sID.Declare(String)
+V.Local.iID.Declare(Long)
+V.Local.bValue.Declare(Boolean, False)
+V.Local.sColumn.Declare(String)
+
+F.Intrinsic.Control.BlockEvents
+
+F.Intrinsic.Control.SelectCase(V.Args.Column.UCase)
+	F.Intrinsic.Control.Case("SELECTED")
+		'select a new record
+		GUI.FExport.GsGCTA.GetCellValueByColumnName("gvTA", "SELECTED", V.Args.RowIndex, V.Local.bValue)
+		F.Data.DataTable.SetValue("dtTAData", V.Args.RowIndex, "SELECTED", V.Local.bValue.Not)
+		F.Intrinsic.Control.CallSub(LoadTotals, "SELECTED_OVERRIDE", -1)
+		
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.UnBlockEvents
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_UnLoad", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.GsGCTA_RowCellClick.End
+
+#End Region ' Time and Attendence Tab
+
+
+#Region "Error Handling"
+
+Program.Sub.FExport_UnLoad.Start
+F.Intrinsic.Control.Try
+
+F.Intrinsic.Control.If(V.DataTable.dTAData.Exists)
+	F.Intrinsic.Control.If(V.Global.bLoadData.Not)
+		F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+			F.Intrinsic.Control.CallSub(Serialize, "FORM", "FExport", "GRIDCONTROL", "GsGCTA", "GRIDVIEW", "gvTA", "REGID", 7481)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_UnLoad", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.FExport_UnLoad.End
+
+Program.Sub.ErrorMessage.Start
+'basic error message for replacing catch block
+'this is really just for when printing the message and ending program
+'pass error number, error description, current subroutine
+'optional callback sub, this will be called before ending
+'optional unattended parameters, those subs may not exist if not using them but won't be called
+F.Intrinsic.Control.Try
+
+V.Local.iError.Declare(Long)
+V.Local.sErrorDescription.Declare(String)
+V.Local.sSubroutine.Declare(String)
+V.Local.sError.Declare(String)
+V.Local.bExists.Declare(Boolean)
+V.Local.sCallback.Declare(String)
+V.Local.sDoubleNewLine.Declare(String)
+V.Local.sLine.Declare(String)
+
+V.Local.iError.Set(V.Args.ErrorNumber)
+V.Local.sErrorDescription.Set(V.Args.ErrorDescription)
+V.Local.sSubroutine.Set(V.Args.Subroutine)
+
+F.Intrinsic.Control.Try
+	V.Local.sLine.Set(V.Ambient.ErrorLine)
+F.Intrinsic.Control.Catch
+	'just means they aren't updated, we don't need to do anything
+F.Intrinsic.Control.EndTry
+
+F.Intrinsic.String.Build("{6}{1}{1}Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}", V.Caller.ScriptFile, V.Ambient.Newline, V.Local.sSubroutine, V.Local.iError, V.Local.sErrorDescription, V.Ambient.GABVersion, V.Ambient.Now, V.Local.sError)
+
+F.Intrinsic.Variable.ArgExists("UNATTENDED", V.Local.bExists)
+F.Intrinsic.Control.If(V.Local.bExists)
+	F.Intrinsic.Control.If(V.Args.UNATTENDED)
+		F.Intrinsic.Control.CallSub(UnattendedErrorMessage, "MESSAGE", V.Local.sError, "PROJECT", V.Args.PROJECT, "PROJECTTITLE", V.Args.PROJECTTITLE, "TASK", V.Args.Task)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.Else
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Variable.ArgExists("WRITE_LOG_FILE", V.Local.bExists)
+F.Intrinsic.Control.If(V.Local.bExists)
+	F.Intrinsic.Control.If(V.Args.WRITE_LOG_FILE)
+		F.Intrinsic.String.Build("{0}{0}", V.Ambient.NewLine, V.Local.sDoubleNewLine)
+		F.Intrinsic.String.Replace(V.Local.sError, V.Local.sDoubleNewLine, V.Ambient.NewLine, V.Local.sError)
+		
+		F.Intrinsic.String.Build("Time: {0}{1}User: {2}{1}Windows User: {3}{1}Machine: {4}{1}PID: {5}{1}Terminal: {6}{1}Caller: {7}{1}Synchronous: {8}{1}Thread ID: {9}{1}Pervasive Client: {10}{1}GAB Version: {11}{1}GSS Version: {12}{1}Error: {13}{1}Error Description: {14}{1}Script: {15}{1}Subroutine: {16}{1}Line: {17}", V.Ambient.Now, V.Ambient.NewLine, V.Caller.User, V.System.UserName, V.System.ComputerName, V.Ambient.PID, V.Caller.Terminal, V.Caller.Caller, V.Caller.Sync,  V.Ambient.ThreadID, V.Ambient.PervasiveClientVersion, V.Ambient.GABVersion, V.Caller.GSSVersion, V.Args.ErrorNumber, V.Args.ErrorDescription, V.Caller.ScriptFile, V.Args.Subroutine, V.Local.sLine, V.Local.sError)
+		
+		F.Intrinsic.Control.CallSub(AddLogFile, "PROJECT", V.Args.Project, "TYPE", V.Args.Task, "MESSAGE", V.Local.sError)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Variable.ArgExists("Callback", V.Local.bExists)
+F.Intrinsic.Control.If(V.Local.bExists)
+	V.Local.sCallback.Set(V.Args.Callback.Trim)
+	F.Intrinsic.Control.CallSub(V.Local.sCallback)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Caller.ScriptFile,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndTry
+Program.Sub.ErrorMessage.End
+
+Program.Sub.AddLogFile.Start
+'pass a project #, and a message
+'date and time will be automatically added
+'pass PROJECT (Folder)
+'pass type (subfolder)
+'MESSAGE (what to log)
+
+F.Intrinsic.Control.Try
+
+V.Local.sProject.Declare(String)
+V.Local.sMessage.Declare(String)
+V.Local.bExists.Declare(Boolean)
+V.Local.sPath.Declare(String)
+V.Local.sFile.Declare(String)
+V.Local.sContents.Declare(String)
+V.Local.sType.Declare(String)
+V.Local.sName.Declare(String)
+
+V.Local.sProject.Set(V.Args.Project.Trim)
+V.Local.sMessage.Set(V.Args.Message.Trim)
+V.Local.sType.Set(V.Args.Type)
+
+F.Intrinsic.File.MakeFilenameFriendly(V.Local.sProject, V.Local.sProject)
+F.Intrinsic.String.Build("{0}\Custom\{1}\{2}\Log\{3}\", V.Caller.GlobalDir, V.Local.sProject, V.Caller.CompanyCode, V.Local.sType, V.Local.sPath)
+F.Intrinsic.Control.CallSub(CheckDirectories, "DIRECTORIES", V.Local.sPath)
+
+F.Intrinsic.String.StripCharacters(V.Ambient.Now, V.Local.sName)
+
+F.Intrinsic.String.Build("{0}\{1}_Log.txt", V.Local.sPath, V.Local.sName, V.Local.sFile)
+F.Intrinsic.File.String2File(V.Local.sFile, V.Local.sMessage)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.AddLogFile.End
+
+Program.Sub.UnattendedErrorMessage.Start
+'send a short error message, add the log
+'pass project ID, project title (for message box title), and error message
+
+F.Intrinsic.Control.Try
+
+V.Local.sMessage.Declare(String)
+
+V.Local.sMessage.Set(V.Args.Message.Trim)
+F.Intrinsic.String.Replace(V.Local.sMessage, V.Ambient.NewLine, ", ", V.Local.sMessage)
+
+F.Intrinsic.UI.InvokeWaitDialog(V.Local.sMessage, V.Args.ProjectTitle)
+F.Intrinsic.UI.Sleep(10)
+F.Intrinsic.UI.CloseWaitDialog
+
+F.Intrinsic.Control.CallSub(AddLog, "Project", V.Args.Project, "TASK", V.Args.Task, "Message", V.Local.sMessage)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.UnattendedErrorMessage.End
+
+Program.Sub.AddLog.Start
+'pass a project #, and a message
+'date and time will be automatically added
+'pass PROJECT (Folder, log name)
+'MESSAGE (what to log)
+
+F.Intrinsic.Control.Try
+
+V.Local.sProject.Declare(String)
+V.Local.sMessage.Declare(String)
+V.Local.bExists.Declare(Boolean)
+V.Local.sPath.Declare(String)
+V.Local.sFile.Declare(String)
+V.Local.sContents.Declare(String)
+V.Local.sTask.Declare(String)
+
+V.Local.sProject.Set(V.Args.Project.Trim)
+V.Local.sMessage.Set(V.Args.Message.Trim)
+V.Local.sTask.Set(V.Args.Task)
+
+F.Intrinsic.String.Replace(V.Local.sMessage, V.Ambient.NewLine, ", ", V.Local.sMessage)
+
+F.Intrinsic.File.MakeFilenameFriendly(V.Local.sProject, V.Local.sProject)
+F.Intrinsic.String.Build("{0}\Custom\{1}\{2}\Log\", V.Caller.GlobalDir, V.Local.sProject, V.Caller.CompanyCode, V.Local.sPath)
+F.Intrinsic.Control.CallSub(CheckDirectories, "DIRECTORIES", V.Local.sPath)
+
+F.Intrinsic.String.Build("{0}\{1}_Log.txt", V.Local.sPath, V.Local.sTask, V.Local.sFile)
+F.Intrinsic.File.Exists(V.Local.sFile, V.Local.bExists)
+F.Intrinsic.Control.If(V.Local.bExists.Not)
+	F.Intrinsic.String.Build("{0} {1}: Log Start", V.Ambient.Date.FormatYYYY-MM-DD, V.Ambient.Time.Format!HH:NN:SS, V.Local.sContents)
+	F.Intrinsic.File.String2File(V.Local.sFile, V.Local.sContents)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("{0} {1}: {2}", V.Ambient.Date.FormatYYYY-MM-DD, V.Ambient.Time.Format!HH:NN:SS, V.Local.sMessage, V.Local.sContents)
+F.Intrinsic.File.Append2FileNewLine(V.Local.sFile, V.Local.sContents)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.AddLog.End
+
+Program.Sub.CheckDirectories.Start
+'check if the given directories exist
+'create them if they don't
+
+F.Intrinsic.Control.Try
+
+V.Local.sDirectories.Declare(String)
+V.Local.sPath.Declare(String)
+V.Local.bExists.Declare(Boolean)
+V.Local.iCounter.Declare(Long)
+
+V.Local.sDirectories.Set(V.Args.Directories)
+F.Intrinsic.String.Split(V.Local.sDirectories, "*!*", V.Local.sDirectories)
+
+F.Intrinsic.Control.For(V.Local.iCounter, 0, V.Local.sDirectories.UBound, 1)
+	V.Local.sPath.Set(V.Local.sDirectories(V.Local.iCounter))
+	F.Intrinsic.File.DirExists(V.Local.sPath, V.Local.bExists)
+	F.Intrinsic.Control.If(V.Local.bExists.Not)
+		F.Intrinsic.File.CreateDir(V.Local.sPath)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.Next(V.Local.iCounter)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.CheckDirectories.End
+
+#End Region ' Error Handling
+
+
+
+#Region "Misc"
+
+
+
+Program.Sub.Export.Start
+'generic export
+'pass Form, GridControl, and Filename base
+
+F.Intrinsic.Control.Try
+
+V.Local.sFileExport.Declare(String)
+V.Local.bExcel.Declare(Boolean)
+V.Local.bFileLocked.Declare(Boolean)
+V.Local.sMessage.Declare(String)
+V.Local.sType.Declare(String)
+V.Local.sForm.Declare(String)
+V.Local.sGridControl.Declare(String)
+V.Local.sFileName.Declare(String)
+V.Local.bExists.Declare(Boolean)
+
+V.Local.sForm.Set(V.Args.Form)
+V.Local.sGridControl.Set(V.Args.GridControl)
+V.Local.sFileName.Set(V.Args.FileName)
+
+F.Intrinsic.Variable.ArgExists("TYPE", V.Local.bExists)
+F.Intrinsic.Control.If(V.Local.bExists)
+	V.Local.sType.Set(V.Args.TYPE.Trim)
+F.Intrinsic.Control.Else
+	F.Automation.MSExcel.CheckPresence(V.Local.bExcel)
+	F.Intrinsic.Control.If(V.Local.bExcel)
+		V.Local.sType.Set("xlsx")
+	F.Intrinsic.Control.Else
+		V.Local.sType.Set("csv")
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.File.MakeFilenameFriendly(V.Local.sFileName, V.Local.sFileName)
+F.Intrinsic.String.Build("{0}{1}_Export_{2}.{3}", V.Caller.LocalGssTempDir, V.Local.sFileName, V.Ambient.Date.FormatMM-DD-YYYY, V.Local.sType, V.Local.sFileExport)
+F.Intrinsic.File.IsFileLocked(V.Local.sFileExport, V.Local.bFileLocked)
+
+F.Intrinsic.Control.If(V.Local.bFileLocked)
+	F.Intrinsic.String.Build("File is already open. Please close and export again.{0}File: {1}", V.Ambient.NewLine, V.Local.sFileExport, V.Local.sMessage)
+	F.Intrinsic.UI.Msgbox(V.Local.sMessage,"File In Use")
+F.Intrinsic.Control.Else
+	Gui.[V.Local.sForm].[V.Local.sGridControl].Export(V.Local.sFileExport, V.Local.sType)
+	F.Intrinsic.Task.ShellExec(0, "", V.Local.sFileExport, "", "", 1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine)
+F.Intrinsic.Control.EndTry
+Program.Sub.Export.End
+
+Program.Sub.GridViewFilterToDataViewFilter.Start
+'this sub is for converting the active filter string of a gridview into a dataview friendly version
+'FILTER	-	The Active Filter String
+
+'valid operators: =, >, <, >=, <=, <>, in, is null, not, like
+
+F.Intrinsic.Control.Try
+
+V.Local.sFilter.Declare(String)
+V.Local.sRet.Declare(String)
+V.Local.iCounter.Declare(Long)
+V.Local.sFields.Declare(String)
+V.Local.sTemp.Declare(String)
+V.Local.sTemp2.Declare(String)
+V.Local.sFindString.Declare(String)
+V.Local.sReplaceString.Declare(String)
+V.Local.sValues.Declare(String)
+V.Local.sValueReturn.Declare(String)
+V.Local.sFieldReturn.Declare(String)
+V.Local.sValueRegEx.Declare(String, "\'[^']*\'")
+V.Local.sFieldRegEx.Declare(String, "\[[A-Za-z0-9_-]+\]")
+V.Local.sNumberRegEx.Declare(String, "-?[0-9]+(\.[0-9]+)?")
+V.Local.sRegEx.Declare(String)
+V.Local.sMatch.Declare(String)
+V.Local.ilength.Declare(Long)
+V.Local.sValueReturn2.Declare(String)
+
+V.Local.sFilter.Set(V.Args.Filter)
+
+'fix all IsNullOrEmpty
+F.Intrinsic.String.Build("IsNullOrEmpty\({0}\)", V.Local.sFieldRegEx, V.Local.sRegEx)
+F.Intrinsic.String.RegExMatch(V.Local.sFilter, V.Local.sRegEx, True, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, !=, "")
+	F.Intrinsic.String.Split(V.Local.sRet, "@!@", V.Local.sRet)
+	F.Intrinsic.Control.For(V.Local.iCounter, 0, V.Local.sRet.UBound, 1)
+		
+		'get match
+		F.Intrinsic.String.Split(V.Local.sRet(V.Local.iCounter), "*!*", V.Local.sTemp)
+		V.Local.sMatch.Set(V.Local.sTemp(1))
+		
+		'get the field, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sFieldRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sFieldReturn.Set(V.Local.sTemp(1))
+		
+		'Replace
+		F.Intrinsic.String.Build("({0} is Null or {0} = '')", V.Local.sFieldReturn, V.Local.sReplaceString)
+		F.Intrinsic.String.Replace(V.Local.sFilter, V.Local.sMatch, V.Local.sReplaceString, V.Local.sFilter)
+	F.Intrinsic.Control.Next(V.Local.iCounter)
+F.Intrinsic.Control.EndIf
+
+'fix all StartsWith
+F.Intrinsic.String.Build("StartsWith\({0},\s*{1}\)", V.Local.sFieldRegEx, V.Local.sValueRegEx, V.Local.sRegEx)
+F.Intrinsic.String.RegExMatch(V.Local.sFilter, V.Local.sRegEx, True, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, !=, "")
+	F.Intrinsic.String.Split(V.Local.sRet, "@!@", V.Local.sRet)
+	F.Intrinsic.Control.For(V.Local.iCounter, 0, V.Local.sRet.UBound, 1)
+		
+		'get match
+		F.Intrinsic.String.Split(V.Local.sRet(V.Local.iCounter), "*!*", V.Local.sTemp)
+		V.Local.sMatch.Set(V.Local.sTemp(1))
+		
+		'get the field, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sFieldRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sFieldReturn.Set(V.Local.sTemp(1))
+		
+		'get the value, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sValueRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sValueReturn.Set(V.Local.sTemp(1))
+		F.Intrinsic.String.TrimChar(V.Local.sValueReturn, "'", V.Local.sValueReturn)
+		
+		'Replace
+		F.Intrinsic.String.Build("{0} like '{1}%'", V.Local.sFieldReturn, V.Local.sValueReturn, V.Local.sReplaceString)
+		F.Intrinsic.String.Replace(V.Local.sFilter, V.Local.sMatch, V.Local.sReplaceString, V.Local.sFilter)
+	F.Intrinsic.Control.Next(V.Local.iCounter)
+F.Intrinsic.Control.EndIf
+
+'fix all EndsWith
+F.Intrinsic.String.Build("EndsWith\({0},\s*{1}\)", V.Local.sFieldRegEx, V.Local.sValueRegEx, V.Local.sRegEx)
+F.Intrinsic.String.RegExMatch(V.Local.sFilter, V.Local.sRegEx, True, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, !=, "")
+	F.Intrinsic.String.Split(V.Local.sRet, "@!@", V.Local.sRet)
+	F.Intrinsic.Control.For(V.Local.iCounter, 0, V.Local.sRet.UBound, 1)
+		
+		'get match
+		F.Intrinsic.String.Split(V.Local.sRet(V.Local.iCounter), "*!*", V.Local.sTemp)
+		V.Local.sMatch.Set(V.Local.sTemp(1))
+		
+		'get the field, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sFieldRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sFieldReturn.Set(V.Local.sTemp(1))
+		
+		'get the value, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sValueRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sValueReturn.Set(V.Local.sTemp(1))
+		F.Intrinsic.String.TrimChar(V.Local.sValueReturn, "'", V.Local.sValueReturn)
+		
+		'Replace
+		F.Intrinsic.String.Build("{0} like '%{1}'", V.Local.sFieldReturn, V.Local.sValueReturn, V.Local.sReplaceString)
+		F.Intrinsic.String.Replace(V.Local.sFilter, V.Local.sMatch, V.Local.sReplaceString, V.Local.sFilter)
+	F.Intrinsic.Control.Next(V.Local.iCounter)
+F.Intrinsic.Control.EndIf
+
+'fix all Contains
+F.Intrinsic.String.Build("Contains\({0},\s*{1}\)", V.Local.sFieldRegEx, V.Local.sValueRegEx, V.Local.sRegEx)
+F.Intrinsic.String.RegExMatch(V.Local.sFilter, V.Local.sRegEx, True, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, !=, "")
+	F.Intrinsic.String.Split(V.Local.sRet, "@!@", V.Local.sRet)
+	F.Intrinsic.Control.For(V.Local.iCounter, 0, V.Local.sRet.UBound, 1)
+		
+		'get match
+		F.Intrinsic.String.Split(V.Local.sRet(V.Local.iCounter), "*!*", V.Local.sTemp)
+		V.Local.sMatch.Set(V.Local.sTemp(1))
+		
+		'get the field, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sFieldRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sFieldReturn.Set(V.Local.sTemp(1))
+		
+		'get the value, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sValueRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sValueReturn.Set(V.Local.sTemp(1))
+		F.Intrinsic.String.TrimChar(V.Local.sValueReturn, "'", V.Local.sValueReturn)
+		
+		'Replace
+		F.Intrinsic.String.Build("{0} like '%{1}%'", V.Local.sFieldReturn, V.Local.sValueReturn, V.Local.sReplaceString)
+		F.Intrinsic.String.Replace(V.Local.sFilter, V.Local.sMatch, V.Local.sReplaceString, V.Local.sFilter)
+	F.Intrinsic.Control.Next(V.Local.iCounter)
+F.Intrinsic.Control.EndIf
+
+'fix between
+F.Intrinsic.String.Build("{0} Between\({1}m?, {1}m?\)", V.Local.sFieldRegEx, V.Local.sNumberRegEx, V.Local.sRegEx)
+F.Intrinsic.String.RegExMatch(V.Local.sFilter, V.Local.sRegEx, True, V.Local.sRet)
+F.Intrinsic.Control.If(V.Local.sRet.Trim, !=, "")
+	F.Intrinsic.String.Split(V.Local.sRet, "@!@", V.Local.sRet)
+	F.Intrinsic.Control.For(V.Local.iCounter, 0, V.Local.sRet.UBound, 1)
+		
+		'get match
+		F.Intrinsic.String.Split(V.Local.sRet(V.Local.iCounter), "*!*", V.Local.sTemp)
+		V.Local.sMatch.Set(V.Local.sTemp(1))
+		
+		'get the field, only one
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sFieldRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "*!*", V.Local.sTemp)
+		V.Local.sFieldReturn.Set(V.Local.sTemp(1))
+		
+		'get the values, two
+		F.Intrinsic.String.RegExMatch(V.Local.sMatch, V.Local.sNumberRegEx, True, V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp, "@!@", V.Local.sTemp)
+		F.Intrinsic.String.Split(V.Local.sTemp(0), "*!*", V.Local.sTemp2)
+		V.Local.sValueReturn.Set(V.Local.sTemp2(1))
+		F.Intrinsic.String.Split(V.Local.sTemp(1), "*!*", V.Local.sTemp2)
+		V.Local.sValueReturn2.Set(V.Local.sTemp2(1))
+		
+		'Replace
+		F.Intrinsic.String.Build("({0} >= {1} and {0} <= {2})", V.Local.sFieldReturn, V.Local.sValueReturn, V.Local.sValueReturn2, V.Local.sReplaceString)
+		F.Intrinsic.String.Replace(V.Local.sFilter, V.Local.sMatch, V.Local.sReplaceString, V.Local.sFilter)
+	F.Intrinsic.Control.Next(V.Local.iCounter)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Variable.AddRV("FILTER", V.Local.sFilter)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_UnLoad", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.GridViewFilterToDataViewFilter.End
+
+#End Region ' Misc
+
+Program.Sub.Comments.Start
+${$5$}$20.1.8769.31171$}$1
+${$6$}$sstanka$}$20240321123818962$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAxx7aqJontEBY8jnSea7gfWAbMzL/GAiFM=
+Program.Sub.Comments.End
