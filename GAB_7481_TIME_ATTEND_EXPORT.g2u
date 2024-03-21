@@ -86,10 +86,8 @@ Gui.FExport.lbl3.BorderStyle(0)
 Gui.FExport.lbl3.Anchor(6)
 Gui.FExport.lbl4.Create(Label,"Start Date:",True,54,13,0,12,10,True,0,"Tahoma",8.25,,0,0)
 Gui.FExport.lbl4.BorderStyle(0)
-Gui.FExport.lbl4.Anchor(6)
 Gui.FExport.lbl5.Create(Label,"End Date:",True,48,13,0,126,10,True,0,"Tahoma",8.25,,0,0)
 Gui.FExport.lbl5.BorderStyle(0)
-Gui.FExport.lbl5.Anchor(6)
 Program.Sub.ScreenSU.End
 
 Program.Sub.Preflight.Start
@@ -114,18 +112,18 @@ F.Intrinsic.Control.Else
 	F.Intrinsic.Control.CallSub(PreFolderCheck)
 	F.Intrinsic.Control.CallSub(LoadContextMenu)
 	
-	F.Intrinsic.Control.CallSub(FExport_RefreshClick)
 	F.Intrinsic.Control.CallSub(SetFromDate)
+	F.Intrinsic.Control.CallSub(FExport_RefreshClick)
 	GUI.FExport..Show
 F.Intrinsic.Control.EndIf
 
 
 
-F.Intrinsic.Control.If(V.Ambient.IsInIDE)
-	GUI.FExport.dtpFromDate.Value(V.Ambient.MinDate)
-	GUI.FExport.dtpToDate.Value("2400-01-01")
-	F.Intrinsic.Control.CallSub(FExport_RefreshClick)
-F.Intrinsic.Control.EndIf
+'F.Intrinsic.Control.If(V.Ambient.IsInIDE)
+'	GUI.FExport.dtpFromDate.Value(V.Ambient.MinDate)
+'	GUI.FExport.dtpToDate.Value("2400-01-01")
+'	F.Intrinsic.Control.CallSub(FExport_RefreshClick)
+'F.Intrinsic.Control.EndIf
 
 F.Intrinsic.Control.Catch
 	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
@@ -413,6 +411,7 @@ F.Intrinsic.Control.If(V.Screen.FExport!txtSelected.Text,=,0)
 F.Intrinsic.Control.EndIf
 
 GUI.FExport..Enabled(false)
+F.intrinsic.UI.InvokeWaitDialog("Compiling Data","Time and Attendance Export")
 
 F.Data.DataView.Create("dtTAData","dvSelected","22","Selected = True","")
 F.Data.DataView.ToDataTable("dtTAData","dvSelected","dtSelected",True)
@@ -458,7 +457,7 @@ f.Intrinsic.Control.For(V.Local.iCnt,0,v.DataTable.dtSelected.RowCount--,1)
 f.Intrinsic.Control.Next(V.Local.iCnt)
 F.Data.DataTable.Close("dtSelected")
 
-
+F.Intrinsic.UI.ChangeWaitStatus("Generating Export File")
 
 F.Intrinsic.string.Build("{0}\CUSTOM\7481\{1}\EXPORT",V.Caller.GlobalDir, V.Caller.CompanyCode, V.Local.sFilePath)
 F.Intrinsic.File.DirExists(V.Local.sFilePath,V.Local.bExists)
@@ -473,6 +472,7 @@ F.Intrinsic.Control.If(V.local.bExists,=,True)
 	F.Intrinsic.File.IsFileLocked(V.Local.sFullFilePath,V.Local.bFileLocked)
 	F.Intrinsic.Control.If(V.Local.bFileLocked)
 		F.Intrinsic.String.Build("File already exists and is locked. Please try again.{0}{1}",V.Ambient.NewLine,v.Local.sFullFilePath,V.Local.sMsg)
+		F.Intrinsic.UI.CloseWaitDialog
 		F.Intrinsic.UI.Msgbox(V.Local.sMsg)
 		F.Data.DataTable.Close("dt")
 		GUI.FExport..Enabled(true)
@@ -492,13 +492,14 @@ F.Data.DataTable.Close("dt")
 f.Intrinsic.String.Concat(v.Caller.GlobalDir,"\pgp\encrypt_upload.bat ",v.Local.sProgExec)
 F.Intrinsic.File.Exists(V.Local.sProgExec,V.Local.bExists)
 F.Intrinsic.Control.If(V.local.bExists,=,false)
+	F.Intrinsic.UI.CloseWaitDialog
 	F.Intrinsic.UI.Msgbox("encrypt_upload.bat not found!")
 	GUI.FExport..Enabled(true)
 	F.Intrinsic.Control.ExitSub	
 F.Intrinsic.Control.EndIf
 
 f.Intrinsic.Task.ShellExec(1,"", v.Local.sProgExec,v.local.sFullFilePath,"", 1)
-
+F.Intrinsic.UI.CloseWaitDialog
 F.Intrinsic.UI.Msgbox("Export to UKG Complete")
 GUI.FExport..Enabled(true)
 GUI.FExport..SetFocus
@@ -1310,5 +1311,5 @@ Program.Sub.GridViewFilterToDataViewFilter.End
 
 Program.Sub.Comments.Start
 ${$5$}$20.1.8769.31171$}$1
-${$6$}$sstanka$}$20240321134135923$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAxQOO0mvsM7ZUjMrXDXwK8SYjFs9+E4qRA=
+${$6$}$sstanka$}$20240321140356151$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAw99V7RvocX6wdA1m018M8xyHWJ8IUO7hw=
 Program.Sub.Comments.End
