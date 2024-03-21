@@ -531,7 +531,7 @@ F.Intrinsic.Control.If(V.DataTable.dtTAData.Exists)
 	F.Data.DataTable.Close("dtTAData")
 F.Intrinsic.Control.EndIf
 
-F.Intrinsic.String.Build("Select CAST(0 as bit) as SELECTED, RTRIM(Employee) as EMPLOYEE, CHARGE_DATE, DATE_IN, TIME_IN, DATE_OUT, TIME_OUT, RTRIM(NAME) as NAME,  HOURS_HH, HOURS_MM, RTRIM(DEPT) as DEPT, SHIFT, BAL_AS_DATE,  DATE_LAST_CHG, TIME_LAST_CHG, RTRIM(LAST_CHG_BY) as LAST_CHG_BY, RTRIM(LAST_CHG_PROG) as LAST_CHG_PROG, RTRIM(REC_GROUP) as REC_GROUP, Cast(IF(PAID = 'Y', '1', '0') as bit) as PAID, Cast(IF(EXCUSED = 'Y', '1', '0') as bit) as EXCUSED, year(BAL_AS_DATE) as Bal_Year  from V_TIME_ATTENDANCE where CHARGE_DATE >= '{0}' and CHARGE_DATE <= '{1}' ", V.Local.dFromDt.PervasiveDate, V.Local.dToDt.PervasiveDate,V.Local.sSQL)
+F.Intrinsic.String.Build("Select CAST(0 as bit) as SELECTED, RTRIM(Employee) as EMPLOYEE, CHARGE_DATE, DATE_IN, TIME_IN, DATE_OUT, TIME_OUT, RTRIM(NAME) as NAME,  HOURS_HH, HOURS_MM, RTRIM(DEPT) as DEPT, SHIFT, BAL_AS_DATE,  DATE_LAST_CHG, TIME_LAST_CHG, RTRIM(LAST_CHG_BY) as LAST_CHG_BY, RTRIM(LAST_CHG_PROG) as LAST_CHG_PROG, RTRIM(REC_GROUP) as REC_GROUP, Cast(IF(PAID = 'Y', '1', '0') as bit) as PAID, Cast(IF(EXCUSED = 'Y', '1', '0') as bit) as EXCUSED, year(BAL_AS_DATE) as Bal_Year  from V_TIME_ATTENDANCE where CHARGE_DATE >= '{0}' and CHARGE_DATE <= '{1}' ORder by CHARGE_DATE Desc", V.Local.dFromDt.PervasiveDate, V.Local.dToDt.PervasiveDate,V.Local.sSQL)
 
 F.ODBC.Connection!Con.OpenCompanyConnection()
 F.Data.DataTable.CreateFromSQL("dtTAData","con",V.Local.sSQL,True)
@@ -1311,5 +1311,5 @@ Program.Sub.GridViewFilterToDataViewFilter.End
 
 Program.Sub.Comments.Start
 ${$5$}$20.1.8769.31171$}$1
-${$6$}$sstanka$}$20240321140356151$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAw99V7RvocX6wdA1m018M8xyHWJ8IUO7hw=
+${$6$}$sstanka$}$20240321140918602$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAw99V7RvocX60nQCuBdys9v4Xvnctyusbs=
 Program.Sub.Comments.End
