@@ -404,6 +404,7 @@ V.Local.sFilePath.Declare
 V.Local.bExists.Declare
 V.Local.bFileLocked.Declare
 V.Local.sMsg.Declare
+V.Local.sExportString.Declare
 
 F.Intrinsic.Control.If(V.Screen.FExport!txtSelected.Text,=,0)
 	F.Intrinsic.UI.Msgbox("No rows have been selected for export, please select rows and try again.")
@@ -481,7 +482,11 @@ F.Intrinsic.Control.If(V.local.bExists,=,True)
 	F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.EndIf
 
-f.Data.Datatable.SaveToCSV("dt",v.Local.sFullFilePath,true)
+F.Data.DataView.Create("dt","dvExport","22")
+F.Data.DataView.ToString("dt","dvExport",",",V.Ambient.NewLine,V.Local.sExportString)
+F.Intrinsic.File.String2File(v.Local.sFullFilePath,V.Local.sExportString)
+'f.Data.Datatable.SaveToCSV("dt",v.Local.sFullFilePath,True)
+F.Data.DataView.Close("dt","dvExport")
 F.Data.DataTable.Close("dt")
 
 f.Intrinsic.String.Concat(v.Caller.GlobalDir,"\pgp\encrypt_upload.bat ",v.Local.sProgExec)
@@ -1305,5 +1310,5 @@ Program.Sub.GridViewFilterToDataViewFilter.End
 
 Program.Sub.Comments.Start
 ${$5$}$20.1.8769.31171$}$1
-${$6$}$sstanka$}$20240321123818962$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAxx7aqJontEBY8jnSea7gfWAbMzL/GAiFM=
+${$6$}$sstanka$}$20240321134135923$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAxQOO0mvsM7ZUjMrXDXwK8SYjFs9+E4qRA=
 Program.Sub.Comments.End
