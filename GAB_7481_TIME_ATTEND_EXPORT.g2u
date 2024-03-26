@@ -95,6 +95,7 @@ v.Global.sDir.Declare
 V.Global.bUnattended.Declare(Boolean, False)
 V.Global.bLoadData.Declare
 V.Global.sFilter.Declare
+V.Global.iRows.Declare
 Program.Sub.Preflight.End
 
 Program.Sub.Main.Start
@@ -105,6 +106,7 @@ F.Intrinsic.Control.Try
 F.Intrinsic.Control.If(V.Ambient.IsInTaskScheduler)
 	'This is where we will start the unattended gathering of data and export to CSV then calling of the BAT file for the encryption and upload to UKG
 	V.Global.bUnattended.Set(True)
+	F.Intrinsic.Control.CallSub(OnlineUpdate)
 	
 F.Intrinsic.Control.Else
 	'User is calling the program from a menu item and we will show them all the data before they export it.
@@ -404,16 +406,21 @@ V.Local.bFileLocked.Declare
 V.Local.sMsg.Declare
 V.Local.sExportString.Declare
 
-F.Intrinsic.Control.If(V.Screen.FExport!txtSelected.Text,=,0)
-	F.Intrinsic.UI.Msgbox("No rows have been selected for export, please select rows and try again.")
-	GUI.FExport..SetFocus
-	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+	F.Intrinsic.Control.If(V.Screen.FExport!txtSelected.Text,=,0)
+		F.Intrinsic.UI.Msgbox("No rows have been selected for export, please select rows and try again.")
+		GUI.FExport..SetFocus
+		F.Intrinsic.Control.ExitSub
+	F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.EndIf
 
-GUI.FExport..Enabled(false)
-F.intrinsic.UI.InvokeWaitDialog("Compiling Data","Time and Attendance Export")
+F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+	GUI.FExport..Enabled(false)
+	F.intrinsic.UI.InvokeWaitDialog("Compiling Data","Time and Attendance Export")
+F.Intrinsic.Control.EndIf
 
-F.Data.DataView.Create("dtTAData","dvSelected","22","Selected = True","")
+
+F.Data.DataView.Create("dtTAData","dvSelected","22","Selected = True and DATE_OUT_VALID = True and DATE_IN_VALID = True","")
 F.Data.DataView.ToDataTable("dtTAData","dvSelected","dtSelected",True)
 F.Data.DataView.Close("dtTAData","dvSelected")
 
@@ -440,24 +447,30 @@ f.Data.Datatable.AddColumn("dt","UserEnteredPosition","Boolean")
 
 f.Intrinsic.Control.For(V.Local.iCnt,0,v.DataTable.dtSelected.RowCount--,1)
 	
-	F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).Date_in!Fieldval,"YYYY/MM/DD",V.Local.sDateIN)
+	F.Intrinsic.String.Format(V.DataTable.dtSelected(V.Local.iCnt).Date_in!Fieldval,"YYYY/MM/DD",V.Local.sDateIN)
 	F.Intrinsic.String.Replace(V.Local.sDateIN,"/","-",V.Local.sDateIN)
-	f.Intrinsic.String.Left(v.DataTable.dtTAData(v.Local.iCnt).Time_in!fieldval,5,v.Local.sTimeIN)
+	f.Intrinsic.String.Left(v.DataTable.dtSelected(v.Local.iCnt).Time_in!fieldval,5,v.Local.sTimeIN)
 	F.Intrinsic.String.Replace(V.Local.sTimeIN,":","",V.Local.sTimeIN)
-	'F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).Time_in!Fieldval,"HHMM",V.Local.sTimeIN)
-	f.Data.Datatable.AddRow("dt","PersonNumber",v.DataTable.dtTAData(v.Local.iCnt).Employee!fieldvaltrim,"Date",v.Local.sDateIN,"Time",v.Local.sTimeIN)
+	'F.Intrinsic.String.Format(V.DataTable.dtSelected(V.Local.iCnt).Time_in!Fieldval,"HHMM",V.Local.sTimeIN)
 	
-	F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).date_out!Fieldval,"YYYY/MM/DD",V.Local.sDateOut)
+	F.Intrinsic.String.Format(V.DataTable.dtSelected(V.Local.iCnt).date_out!Fieldval,"YYYY/MM/DD",V.Local.sDateOut)
 	F.Intrinsic.String.Replace(V.Local.sDateOut,"/","-",V.Local.sDateOut)
-	f.Intrinsic.String.Left(v.DataTable.dtTAData(v.Local.iCnt).Time_out!fieldval,5,v.Local.sTimeOut)
+	f.Intrinsic.String.Left(v.DataTable.dtSelected(v.Local.iCnt).Time_out!fieldval,5,v.Local.sTimeOut)
 	F.Intrinsic.String.Replace(V.Local.sTimeOut,":","",V.Local.sTimeOut)
-	'F.Intrinsic.String.Format(V.DataTable.dtTAData(V.Local.iCnt).Time_out!Fieldval,"HHMM",V.Local.sTimeOut)
-	f.Data.Datatable.AddRow("dt","PersonNumber",v.DataTable.dtTAData(v.Local.iCnt).Employee!fieldvaltrim,"Date",v.Local.sDateOut,"Time",v.Local.sTimeOut)
+	'F.Intrinsic.String.Format(V.DataTable.dtSelected(V.Local.iCnt).Time_out!Fieldval,"HHMM",V.Local.sTimeOut)
+	
+	F.Intrinsic.Control.If(V.Local.sTimeIN,<>,V.Local.sTimeOut)
+		f.Data.Datatable.AddRow("dt","PersonNumber",v.DataTable.dtSelected(v.Local.iCnt).Employee!fieldvaltrim,"Date",v.Local.sDateIN,"Time",v.Local.sTimeIN)
+		f.Data.Datatable.AddRow("dt","PersonNumber",v.DataTable.dtSelected(v.Local.iCnt).Employee!fieldvaltrim,"Date",v.Local.sDateOut,"Time",v.Local.sTimeOut)
+	F.Intrinsic.Control.EndIf
 	
 f.Intrinsic.Control.Next(V.Local.iCnt)
 F.Data.DataTable.Close("dtSelected")
 
-F.Intrinsic.UI.ChangeWaitStatus("Generating Export File")
+F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+	F.Intrinsic.UI.ChangeWaitStatus("Generating Export File")
+F.Intrinsic.Control.EndIf
+
 
 F.Intrinsic.string.Build("{0}\CUSTOM\7481\{1}\EXPORT",V.Caller.GlobalDir, V.Caller.CompanyCode, V.Local.sFilePath)
 F.Intrinsic.File.DirExists(V.Local.sFilePath,V.Local.bExists)
@@ -471,17 +484,24 @@ F.Intrinsic.File.Exists(V.Local.sFullFilePath,V.Local.bExists)
 F.Intrinsic.Control.If(V.local.bExists,=,True)
 	F.Intrinsic.File.IsFileLocked(V.Local.sFullFilePath,V.Local.bFileLocked)
 	F.Intrinsic.Control.If(V.Local.bFileLocked)
-		F.Intrinsic.String.Build("File already exists and is locked. Please try again.{0}{1}",V.Ambient.NewLine,v.Local.sFullFilePath,V.Local.sMsg)
-		F.Intrinsic.UI.CloseWaitDialog
-		F.Intrinsic.UI.Msgbox(V.Local.sMsg)
-		F.Data.DataTable.Close("dt")
-		GUI.FExport..Enabled(true)
-		F.Intrinsic.Control.ExitSub
+		F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+			F.Intrinsic.String.Build("File already exists and is locked. Please try again.{0}{1}",V.Ambient.NewLine,v.Local.sFullFilePath,V.Local.sMsg)
+			F.Intrinsic.UI.CloseWaitDialog
+			F.Intrinsic.UI.Msgbox(V.Local.sMsg)
+			F.Data.DataTable.Close("dt")
+			GUI.FExport..Enabled(true)
+			F.Intrinsic.Control.ExitSub
+		F.Intrinsic.Control.Else
+			'Add error log
+			F.Intrinsic.Control.CallSub(UnattendedErrorMessage, "MESSAGE", "Export File already exists and is locked.", "PROJECTTITLE", "Time and Attendance Export", "PROJECT", "7481","TASK","GAB_7481_TIME_ATTEND_EXPORT")
+			F.Intrinsic.Control.CallSub(OnlineUpdateClose)
+		F.Intrinsic.Control.EndIf	
 	F.Intrinsic.Control.Else
 		F.Intrinsic.File.DeleteFile(V.Local.sFullFilePath)
 	F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.EndIf
 
+V.Global.iRows.Set(V.DataTable.dt.RowCount)
 F.Data.DataView.Create("dt","dvExport","22")
 F.Data.DataView.ToString("dt","dvExport",",",V.Ambient.NewLine,V.Local.sExportString)
 F.Intrinsic.File.String2File(v.Local.sFullFilePath,V.Local.sExportString)
@@ -492,18 +512,28 @@ F.Data.DataTable.Close("dt")
 f.Intrinsic.String.Concat(v.Caller.GlobalDir,"\pgp\encrypt_upload.bat ",v.Local.sProgExec)
 F.Intrinsic.File.Exists(V.Local.sProgExec,V.Local.bExists)
 F.Intrinsic.Control.If(V.local.bExists,=,false)
-	F.Intrinsic.UI.CloseWaitDialog
-	F.Intrinsic.UI.Msgbox("encrypt_upload.bat not found!")
-	GUI.FExport..Enabled(true)
-	F.Intrinsic.Control.ExitSub	
+	F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+
+		F.Intrinsic.UI.CloseWaitDialog
+		F.Intrinsic.UI.Msgbox("encrypt_upload.bat not found!")
+		GUI.FExport..Enabled(true)
+		F.Intrinsic.Control.ExitSub	
+	F.Intrinsic.Control.Else
+		'Add error log
+		F.Intrinsic.Control.CallSub(UnattendedErrorMessage, "MESSAGE", "encrypt_upload.bat not found!", "PROJECTTITLE", "Time and Attendance Export", "PROJECT", "7481","TASK","GAB_7481_TIME_ATTEND_EXPORT")
+		F.Intrinsic.Control.CallSub(OnlineUpdateClose)
+	F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.EndIf
 
 f.Intrinsic.Task.ShellExec(1,"", v.Local.sProgExec,v.local.sFullFilePath,"", 1)
-F.Intrinsic.UI.CloseWaitDialog
-F.Intrinsic.UI.Msgbox("Export to UKG Complete")
-GUI.FExport..Enabled(true)
-GUI.FExport..SetFocus
-	
+
+F.Intrinsic.Control.If(V.Global.bUnattended.Not)
+	F.Intrinsic.UI.CloseWaitDialog
+	F.Intrinsic.UI.Msgbox("Export to UKG Complete")
+	GUI.FExport..Enabled(true)
+	GUI.FExport..SetFocus
+F.Intrinsic.Control.EndIf	
+
 F.Intrinsic.Control.Catch
 	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_Unload", "PROJECT", "7481", "PROJECTTITLE", "GCG_7481_NEST_XP", "TASK", "GCG_7481_NEST_XP")
 F.Intrinsic.Control.EndTry
@@ -538,6 +568,9 @@ F.Data.DataTable.CreateFromSQL("dtTAData","con",V.Local.sSQL,True)
 F.ODBC.Connection!con.Close
 
 F.Data.DataTable.AddExpressionColumn("dtTAData", "BALANCED", "Boolean", "IIF([Bal_Year] > '1900', True, False)")
+F.Data.DataTable.AddExpressionColumn("dtTAData", "DATE_OUT_VALID", "Boolean", "IIF([DATE_OUT] = #01/01/1900#, False, True)")
+F.Data.DataTable.AddExpressionColumn("dtTAData", "DATE_IN_VALID", "Boolean", "IIF([DATE_IN] = #01/01/1900#, False, True)")
+
 
 F.Data.Dataview.Create("dtTAData","dvTAData",22)
 
@@ -683,6 +716,21 @@ GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","allowedit", false)
 GUI.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","MinWidth", 30)
 Gui.FExport.GsGCTA.SetColumnProperty("gvTA","BALANCED","Fixed","left")
 
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT_VALID","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT_VALID","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT_VALID","caption","Valid Date Out")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT_VALID","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT_VALID","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_OUT_VALID","MinWidth", 30)
+
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN_VALID","headerforecolor", V.Color.PRI-GSS-00)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN_VALID","headerfontbold", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN_VALID","caption","Valid Date In")
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN_VALID","readonly", true)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN_VALID","allowedit", false)
+GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_IN_VALID","MinWidth", 30)
+
+
 GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","headerforecolor", V.Color.PRI-GSS-00)
 GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","headerfontbold", true)
 GUI.FExport.GsGCTA.SetColumnProperty("gvTA","DATE_LAST_CHG","caption","Last Chg Date")
@@ -776,6 +824,10 @@ F.Data.DataTable.AddColumn("dtTAData","HOURS_MM","Long")
 F.Data.DataTable.AddColumn("dtTAData","Bal_Year","Long")
 
 F.Data.DataTable.AddExpressionColumn("dtTAData", "BALANCED", "Boolean", "IIF([Bal_Year] > '1900', True, False)")
+'F.Data.DataTable.AddExpressionColumn("dtTAData", "SAME_TIME", "Boolean", "IIF(Substring(Convert([TIME_IN], System.String), 1, 5) = Substring(Convert([TIME_OUT], System.String), 1, 5), True, False)")
+'F.Data.DataTable.AddExpressionColumn("dtTAData", "SAME_TIME", "Boolean", "IIF(Convert([TIME_IN], System.String) = Convert([TIME_OUT], System.String), True, False)")
+F.Data.DataTable.AddExpressionColumn("dtTAData", "DATE_OUT_VALID", "Boolean", "IIF([DATE_OUT] = #01/01/1900#, False, True)")
+F.Data.DataTable.AddExpressionColumn("dtTAData", "DATE_IN_VALID", "Boolean", "IIF([DATE_IN] = #01/01/1900#, False, True)")
 
 F.Data.Dataview.Create("dtTAData","dvTAData",22)
 
@@ -864,6 +916,109 @@ Program.Sub.GsGCTA_RowCellClick.End
 
 #End Region ' Time and Attendence Tab
 
+#Region "Automated Task"
+
+Program.Sub.OnlineUpdate.Start
+'this sub is for automatically exporting all new jobs when Online update processes
+
+F.Intrinsic.Control.Try
+
+V.Local.sMessage.Declare(String)
+V.Local.iRows.Declare
+
+'load jobs
+F.Intrinsic.Control.CallSub(OnlineUpdateLoadJobs)
+
+'export jobs
+F.Intrinsic.Control.If(V.DataTable.dtTAData.RowCount, >, 0)
+	F.Intrinsic.String.Build("{0} TA lines found. Exporting...", V.DataTable.dtTAData.RowCount, V.Local.sMessage)
+	F.Intrinsic.Control.CallSub(AddLog, "Project", "7481", "Message", V.Local.sMessage,"TASK","GAB_7481_TIME_ATTEND_EXPORT")
+	F.Intrinsic.Control.CallSub(cmdXP_Click)
+	
+	F.Intrinsic.String.Build("Finished exporting{0} eligible records. Exiting...", V.Global.iRows, V.Local.sMessage)
+	F.Intrinsic.Control.CallSub(AddLog, "Project", "7481", "Message", V.Local.sMessage,"TASK","GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.Else
+	F.Intrinsic.String.Build("No eligible lines found. Ending Program", V.Global.iRows, V.Local.sMessage)
+	F.Intrinsic.Control.CallSub(AddLog, "Project", "7481", "Message", V.Local.sMessage,"TASK","GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndIf
+
+'done, close
+F.Intrinsic.Control.CallSub(OnlineUpdateClose)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_UnLoad", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.OnlineUpdate.End
+
+
+Program.Sub.OnlineUpdateLoadJobs.Start
+'load all unexported jobs eligible for Nesting export
+
+F.Intrinsic.Control.Try
+
+V.Local.sSQL.Declare(String)
+V.Local.sFilter.Declare(String)
+V.Local.dDate.Declare(Date)
+V.Local.dDate2.Declare(Date)
+V.Local.bUpdatedOnly.Declare(Boolean, False)
+V.Local.dFromDt.Declare
+V.Local.dToDt.Declare
+V.Local.bExists.Declare
+V.Local.sListVw.Declare
+V.Local.icount.Declare
+V.Local.sRet.Declare(String)
+
+
+F.Intrinsic.Date.DateAdd("d", -7, V.Ambient.Date, V.Local.dFromDt)
+V.Local.dToDt.Set(V.Ambient.Date)
+
+F.Intrinsic.Control.If(V.DataTable.dtTAData.Exists)
+	F.Data.DataTable.Close("dtTAData")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("Select CAST(1 as bit) as SELECTED, RTRIM(Employee) as EMPLOYEE, CHARGE_DATE, DATE_IN, TIME_IN, DATE_OUT, TIME_OUT, RTRIM(NAME) as NAME,  HOURS_HH, HOURS_MM, RTRIM(DEPT) as DEPT, SHIFT, BAL_AS_DATE,  DATE_LAST_CHG, TIME_LAST_CHG, RTRIM(LAST_CHG_BY) as LAST_CHG_BY, RTRIM(LAST_CHG_PROG) as LAST_CHG_PROG, RTRIM(REC_GROUP) as REC_GROUP, Cast(IF(PAID = 'Y', '1', '0') as bit) as PAID, Cast(IF(EXCUSED = 'Y', '1', '0') as bit) as EXCUSED, year(BAL_AS_DATE) as Bal_Year  from V_TIME_ATTENDANCE where CHARGE_DATE >= '{0}' and CHARGE_DATE <= '{1}' ORder by CHARGE_DATE Desc", V.Local.dFromDt.PervasiveDate, V.Local.dToDt.PervasiveDate,V.Local.sSQL)
+
+F.ODBC.Connection!Con.OpenCompanyConnection()
+F.Data.DataTable.CreateFromSQL("dtTAData","con",V.Local.sSQL,True)
+F.ODBC.Connection!con.Close
+
+F.Data.DataTable.AddExpressionColumn("dtTAData", "BALANCED", "Boolean", "IIF([Bal_Year] > '1900', True, False)")
+F.Data.DataTable.AddExpressionColumn("dtTAData", "DATE_OUT_VALID", "Boolean", "IIF([DATE_OUT] = #01/01/1900#, False, True)")
+F.Data.DataTable.AddExpressionColumn("dtTAData", "DATE_IN_VALID", "Boolean", "IIF([DATE_IN] = #01/01/1900#, False, True)")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_UnLoad", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.OnlineUpdateLoadJobs.End
+
+
+Program.Sub.OnlineUpdateClose.Start
+'check everything and then close
+
+F.Intrinsic.Control.Try
+
+
+'F.Intrinsic.Control.If(V.DataView.dtJobData!SelJobVw.Exists)
+'	F.Data.DataView.Close("dtJobData", "SelJobVw")
+'F.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.If(V.DataTable.dt.Exists)
+	F.Data.DataTable.Close("dt")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.DataTable.dtTAData.Exists)
+	F.Data.DataTable.Close("dtTAData")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(ErrorMessage, "ErrorNumber", V.Ambient.ErrorNumber, "ErrorDescription", V.Ambient.ErrorDescription, "Subroutine", V.Ambient.CurrentSubroutine, "UNATTENDED", V.Global.bUnattended, "Callback", "FExport_UnLoad", "PROJECT", "7481", "PROJECTTITLE", "GAB_7481_TIME_ATTEND_EXPORT", "TASK", "GAB_7481_TIME_ATTEND_EXPORT")
+F.Intrinsic.Control.EndTry
+Program.Sub.OnlineUpdateClose.End
+
+#End Region ' Automated Task
 
 #Region "Error Handling"
 
@@ -912,7 +1067,7 @@ F.Intrinsic.Control.Catch
 	'just means they aren't updated, we don't need to do anything
 F.Intrinsic.Control.EndTry
 
-F.Intrinsic.String.Build("{6}{1}{1}Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}", V.Caller.ScriptFile, V.Ambient.Newline, V.Local.sSubroutine, V.Local.iError, V.Local.sErrorDescription, V.Ambient.GABVersion, V.Ambient.Now, V.Local.sError)
+F.Intrinsic.String.Build("{1}{1}Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}", V.Caller.ScriptFile, V.Ambient.Newline, V.Local.sSubroutine, V.Local.iError, V.Local.sErrorDescription, V.Ambient.GABVersion, V.Local.sError)
 
 F.Intrinsic.Variable.ArgExists("UNATTENDED", V.Local.bExists)
 F.Intrinsic.Control.If(V.Local.bExists)
@@ -923,18 +1078,6 @@ F.Intrinsic.Control.If(V.Local.bExists)
 	F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.Else
 	F.Intrinsic.UI.Msgbox(V.Local.sError)
-F.Intrinsic.Control.EndIf
-
-F.Intrinsic.Variable.ArgExists("WRITE_LOG_FILE", V.Local.bExists)
-F.Intrinsic.Control.If(V.Local.bExists)
-	F.Intrinsic.Control.If(V.Args.WRITE_LOG_FILE)
-		F.Intrinsic.String.Build("{0}{0}", V.Ambient.NewLine, V.Local.sDoubleNewLine)
-		F.Intrinsic.String.Replace(V.Local.sError, V.Local.sDoubleNewLine, V.Ambient.NewLine, V.Local.sError)
-		
-		F.Intrinsic.String.Build("Time: {0}{1}User: {2}{1}Windows User: {3}{1}Machine: {4}{1}PID: {5}{1}Terminal: {6}{1}Caller: {7}{1}Synchronous: {8}{1}Thread ID: {9}{1}Pervasive Client: {10}{1}GAB Version: {11}{1}GSS Version: {12}{1}Error: {13}{1}Error Description: {14}{1}Script: {15}{1}Subroutine: {16}{1}Line: {17}", V.Ambient.Now, V.Ambient.NewLine, V.Caller.User, V.System.UserName, V.System.ComputerName, V.Ambient.PID, V.Caller.Terminal, V.Caller.Caller, V.Caller.Sync,  V.Ambient.ThreadID, V.Ambient.PervasiveClientVersion, V.Ambient.GABVersion, V.Caller.GSSVersion, V.Args.ErrorNumber, V.Args.ErrorDescription, V.Caller.ScriptFile, V.Args.Subroutine, V.Local.sLine, V.Local.sError)
-		
-		F.Intrinsic.Control.CallSub(AddLogFile, "PROJECT", V.Args.Project, "TYPE", V.Args.Task, "MESSAGE", V.Local.sError)
-	F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.EndIf
 
 F.Intrinsic.Variable.ArgExists("Callback", V.Local.bExists)
@@ -1039,11 +1182,11 @@ F.Intrinsic.Control.CallSub(CheckDirectories, "DIRECTORIES", V.Local.sPath)
 F.Intrinsic.String.Build("{0}\{1}_Log.txt", V.Local.sPath, V.Local.sTask, V.Local.sFile)
 F.Intrinsic.File.Exists(V.Local.sFile, V.Local.bExists)
 F.Intrinsic.Control.If(V.Local.bExists.Not)
-	F.Intrinsic.String.Build("{0} {1}: Log Start", V.Ambient.Date.FormatYYYY-MM-DD, V.Ambient.Time.Format!HH:NN:SS, V.Local.sContents)
+	F.Intrinsic.String.Build("{0} {1}: Log Start", V.Ambient.Date.FormatYYYY-MM-DD, V.Ambient.Time, V.Local.sContents)
 	F.Intrinsic.File.String2File(V.Local.sFile, V.Local.sContents)
 F.Intrinsic.Control.EndIf
 
-F.Intrinsic.String.Build("{0} {1}: {2}", V.Ambient.Date.FormatYYYY-MM-DD, V.Ambient.Time.Format!HH:NN:SS, V.Local.sMessage, V.Local.sContents)
+F.Intrinsic.String.Build("{0} {1}: {2}", V.Ambient.Date.FormatYYYY-MM-DD, V.Ambient.Time, V.Local.sMessage, V.Local.sContents)
 F.Intrinsic.File.Append2FileNewLine(V.Local.sFile, V.Local.sContents)
 
 F.Intrinsic.Control.Catch
@@ -1311,5 +1454,5 @@ Program.Sub.GridViewFilterToDataViewFilter.End
 
 Program.Sub.Comments.Start
 ${$5$}$20.1.8769.31171$}$1
-${$6$}$sstanka$}$20240321140918602$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAw99V7RvocX60nQCuBdys9v4Xvnctyusbs=
+${$6$}$sstanka$}$20240326151348282$}$mP+zz5Tw3sT2/nyap+FbWm4triMPqjXDbIctZl7fBAzXfqKQno2xmsdalvk5gajh1INeHo3k4b0=
 Program.Sub.Comments.End
